@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 from app.services.mission_intelligence import MissionIntelligence
+from app.services.reinforcement_policy import ReinforcementPolicy
+from app.services.telemetry_service import TelemetryService
 
 app = FastAPI(
     title="Aero-Delivery Intelligence API",
@@ -10,6 +12,8 @@ app = FastAPI(
 )
 
 intelligence = MissionIntelligence()
+policy = ReinforcementPolicy()
+telemetry_service = TelemetryService()
 
 
 class MissionRequest(BaseModel):
@@ -27,6 +31,16 @@ class MissionResponse(BaseModel):
     mode: str
     actions: list[str]
     wake_window: str
+
+
+class TelemetryEvent(BaseModel):
+    altitude_m: float
+    velocity_mps: float
+    battery_pct: float
+    wind_kph: float
+    target_distance_m: float
+    destination: str
+    status: str = "in_flight"
 
 
 @app.get("/health")
@@ -55,6 +69,31 @@ async def mission_summary() -> dict:
     return intelligence.summary()
 
 
+@app.post("/telemetry/ingest")
+async def ingest_telemetry(event: TelemetryEvent) -> dict:
+    metrics = telemetry_service.summarize(event.model_dump())
+    return {
+        "status": "accepted",
+        "metrics": metrics,
+        "learning_signal": policy.evaluate_telemetry(metrics),
+    }
+
+
+@app.post("/learning/reward")
+async def learning_reward(payload: dict) -> dict:
+    reward = policy.update_from_outcome(payload)
+    return {
+        "status": "updated",
+        "reward": reward,
+        "policy_snapshot": policy.snapshot(),
+    }
+
+
+@app.get("/learning/policy")
+async def policy_state() -> dict:
+    return policy.snapshot()
+
+
 @app.get("/")
 async def root() -> dict:
     return {
@@ -66,5 +105,7 @@ async def root() -> dict:
             "risk-aware mission logic",
             "vision-driven perception",
             "adaptive behavior",
+            "telemetry learning",
+            "policy optimization",
         ],
     }

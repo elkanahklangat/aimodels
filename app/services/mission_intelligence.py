@@ -96,3 +96,11 @@ class MissionIntelligence:
             "latest_weather": latest["weather"],
             "latest_confidence": round(latest["confidence"], 2),
         }
+
+    def evaluate_outcome(self, outcome: dict) -> float:
+        success = outcome.get("success", False)
+        battery_penalty = 0.05 * max(0, 50 - float(outcome.get("battery_pct", 50))) / 50
+        risk_penalty = 0.08 * float(outcome.get("risk_index", 0.0))
+        if success:
+            return 1.0 - battery_penalty - risk_penalty
+        return -1.0 + battery_penalty + risk_penalty

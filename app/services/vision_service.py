@@ -9,4 +9,10 @@ async def vision_ready() -> dict:
         "status": "ready",
         "module": "vision_service",
         "task": "detect landing zones and restaurant targets",
+        "tools": [
+            "target recognition",
+            "obstacle awareness",
+            "landing zone verification",
+            "environment mapping",
+        ],
     }

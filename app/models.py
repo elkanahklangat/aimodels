@@ -8,3 +8,10 @@ class MissionTelemetry(BaseModel):
     wind_kph: float
     target_distance_m: float
     destination: str
+
+
+class MissionOutcome(BaseModel):
+    success: bool
+    battery_pct: float
+    risk_index: float
+    route_efficiency: float
