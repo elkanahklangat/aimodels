@@ -1,171 +1,138 @@
-# AI Models for Autonomous Aero-Delivery Intelligence
+# Autonomous Aero-Delivery Intelligence
 
-Autonomous flight systems require more than a controller; they require perception, memory, adaptation, and decision-quality under uncertainty. This repository is the intelligence layer for a small autonomous aerial vehicle designed to perform adaptive delivery tasks, learn from local environmental conditions, and operate with safety-aware autonomy across edge compute hardware.
+The aimodels repository is the intelligence layer of a connected autonomous flight architecture. It translates raw sensory input into safe, adaptive, and mission-aware decisions for an autonomous aerial delivery vehicle that collects tea, learns from the environment, and wakes the occupant when the mission is complete.
 
-This project is intentionally designed as a companion to the Pyv vehicle platform. Together, the stack forms an integrated system for autonomous tea delivery, environmental learning, and resilient flight behavior in dynamic real-world conditions.
+This repository forms the cognitive backbone of the Pyv vehicle platform and deliberately fuses TinyML, TensorFlow, computer vision, reinforcement-learning-inspired optimization, and mission orchestration into a single operating intelligence system.
 
-## Mission
+## System Role
 
-Before the household wakes, the aircraft departs to collect tea and a prepared meal from the local restaurant. It learns the route, adapts to local air and land conditions, and returns at a time that minimizes disruption and maximizes comfort. Once it arrives, it delivers the tea and wakes the occupant with a calm and context-aware wake-up sequence.
+The full system is designed as a two-layer architecture:
 
-The system is not a static autopilot. It is a closed-loop autonomous lifecycle that continuously learns, evaluates risk, and improves through trial, error, and reinforcement.
+- Pyv: the physical aerial platform, flight control, onboard execution, and operational hardware stack
+- aimodels: the perception, planning, learning, and decision layer
 
-## Design Philosophy
+This division allows the vehicle to remain safe and operational while the intelligence layer learns from route conditions, vision feedback, and mission outcomes.
 
-The intelligence stack combines four layers:
+## Mission Concept
 
-- TinyML for ultra-low-power on-device inference and sensory filtering
-- TensorFlow and computer vision for scene understanding and navigation cues
-- Reinforcement learning for policy adaptation in changing environments
-- Mission logic for route planning, risk management, and task orchestration
+The aircraft departs from home before the user wakes, travels to a local restaurant or pickup point, acquires tea and prepared food, and returns to deliver the order while synchronizing the wake-up sequence with the user’s environment and timing. This is not just a delivery task; it is a real-time adaptive autonomous routine in which the vehicle learns, corrects, and evolves.
 
-This repository supports the intelligence required for a small autonomous flying vehicle to understand place, context, and behavior under uncertainty.
+## Technology Stack
 
-## System Role in the Stack
+- Python for orchestration and model pipelines
+- FastAPI for mission APIs and decision services
+- TensorFlow for deep learning and inference
+- TinyML for low-power edge decisions
+- Computer vision for delivery and navigation perception
+- Reinforcement-inspired optimization for behavioral adaptation
 
-This repository provides the cognitive and learning components, while the Pyv repository hosts the physical vehicle runtime, sensors, flight control, and real-world execution layer.
-
-Together:
-
-- Pyv handles the flight platform, power, mobility, real-time actuators, and embedded hardware
-- aimodels handles perception, planning, learning, adaptation, and control policy optimization
-
-## Architecture Overview
+## Architecture
 
 ```text
-Sensors / Inputs
-  ├─ Camera + vision streams
-  ├─ IMU / motion and vibration
-  ├─ GPS / localization
-  ├─ Environmental telemetry
-  └─ Time-of-day and task constraints
+Environment
+  ├─ local routing data
+  ├─ weather and wind conditions
+  ├─ restaurant / target recognition
+  ├─ user wake-time preference
+  └─ safety and flight constraints
           │
           v
-Inference and Perception
-  ├─ TinyML edge classifiers
-  ├─ TensorFlow CNN / CV models
-  ├─ Detection and segmentation pipelines
-  └─ Signal denoising and feature extraction
+Perception Layer
+  ├─ object and obstacle detection
+  ├─ landing-zone classification
+  ├─ route and signage recognition
+  └─ sensor fusion and feature extraction
           │
           v
-Decision and Learning
-  ├─ Policy optimization
-  ├─ Reinforcement learning loop
-  ├─ Risk-aware planning
-  └─ Adaptive behavior tuning
+Learning Layer
+  ├─ TinyML edge models
+  ├─ TensorFlow vision and policy models
+  ├─ adaptive reward-based learning
+  └─ iterative mission refinement
           │
           v
-Mission Control
-  ├─ Route selection
-  ├─ Delivery coordination
-  ├─ Wake-up scheduling
-  └─ Safety gating
+Decision Layer
+  ├─ mission sequencing
+  ├─ route selection
+  ├─ wake-ahead scheduling
+  └─ operational risk gating
+          │
+          v
+Execution Layer
+  ├─ Pyv flight control
+  ├─ route commands
+  ├─ landing / pickup coordination
+  └─ real-world mission execution
 ```
 
-## Core Intelligence Modules
+## Repositories in Connection
 
-### 1. TinyML Edge Intelligence
+This repository is the computational and adaptive counterpart to Pyv:
 
-Low-power inference is deployed on compact edge hardware to perform rapid tasks such as:
+- aimodels: sensor intelligence, mission logic, learning, and inference
+- Pyv: actual vehicle control, hardware orchestration, and flight behavior
 
-- local obstacle classification
-- vibration pattern monitoring
-- thermal and environmental state estimation
-- lightweight condition detection for emergency gating
+Together they demonstrate a coherent autonomous platform rather than isolated components.
 
-This minimizes latency and reduces the dependence on cloud infrastructure.
+## FastAPI Service Blueprint
 
-### 2. Computer Vision and Perception
+The project exposes a decision and planning API to coordinate mission intelligence with onboard flight operations.
 
-The vehicle uses visual perception to understand its environment, including:
+Example endpoints:
 
-- landing zone detection
-- restaurant recognition and delivery target localization
-- obstacle and human presence awareness
-- route segmentation and environmental mapping
+- `GET /health` for service readiness
+- `POST /mission/planning` for route and mission recommendations
+- `POST /vision/observe` for scene understanding results
+- `GET /mission/summary` for current mission intelligence state
 
-The model stack is oriented toward real-time perception under variable lighting and motion conditions.
+## Python Implementation
 
-### 3. Reinforcement Learning for Adaptive Behavior
+The repository includes production-style Python modules for:
 
-The aircraft is designed to learn through continuous feedback. In the same way a human learns to navigate complex environments, the system uses reinforcement learning to:
+- routing and mission planning
+- decision heuristics and reinforcement-inspired updates
+- event and telemetry handling
+- API endpoints for integration with flight control
 
-- improve landing and takeoff stability
-- adapt to wind shear and local conditions
-- learn efficient route selection
-- optimize mission behavior over repeated trials
+## Learning Philosophy
 
-Failure is treated as information. The system is expected to refine its policies through repeated success and correction cycles.
+The vehicle is expected to improve through repeated real-world feedback:
 
-### 4. Mission Planning and Safety
+- if a landing attempt fails, the model updates risk estimation
+- if a route is inefficient, the planner biases toward better alternatives
+- if lighting or weather changes, the vision stack adapts
+- if delivery timing slips, the mission optimizer realigns with context
 
-The autonomy loop includes high-level constraints for:
+Failure is treated as training data, not as a terminal condition.
 
-- no-fly or restricted zones
-- safe failover behavior
-- wake-up and delivery timing logic
-- route confidence estimation
-- human proximity handling
+## Strategic Direction
 
-The objective is not only success but robust and safe success under uncertainty.
+This repository is a foundation for more advanced autonomous systems beyond morning tea delivery. The same architecture can evolve toward:
 
-## Hardware and Model Deployment
+- autonomous material collection
+- remote operational scouting
+- adaptive multi-objective navigation
+- resilient mission execution in harsh environments
 
-This repository is intended to work across heterogeneous edge systems, including:
+The long-term sequence could extend far beyond local delivery, including future missions in environments like the Moon or other remote frontier operations.
 
-- Arduino for sensor interfacing and low-level signal control
-- Raspberry Pi for local compute coordination and telemetry
-- Jetson Nano for heavier vision and learning workloads
+## Project Structure
 
-This distributed compute strategy enables a layered intelligence design: edge devices process fast local states while higher-compute units handle deep inference and learning.
+```text
+aimodels/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── models.py
+│   └── services/
+│       ├── __init__.py
+│       ├── mission_intelligence.py
+│       └── vision_service.py
+├── requirements.txt
+├── README.md
+└── LICENSE
+```
 
-## Learning Pipeline
+## Summary
 
-The model lifecycle is designed as a closed-loop improvement system:
-
-1. collect sensor and environmental data
-2. label and structure mission-relevant observations
-3. train perception and policy models
-4. deploy edge models to runtime hardware
-5. evaluate mission outcomes
-6. update policies using reinforcement feedback
-
-This forms the adaptive engine that gradually improves mission quality.
-
-## Reinforcement and Control Vision
-
-The system is designed around a practical but ambitious idea: autonomous systems become reliable by learning from experience. We intentionally treat early attempts as exploratory, with every failed attempt contributing to better control, route planning, and delivery performance.
-
-The long-term goal is a fleet of capable autonomous vehicles that learn local context, reduce failure risk, and become more precise over time.
-
-## Repository Relationship
-
-This repository is conceptually connected to Pyv as follows:
-
-- Pyv = vehicle and execution platform
-- aimodels = learning, perception, planning, and control intelligence
-
-The system is designed to operate as a single autonomous vehicle architecture where the physical and cognitive layers are tightly coupled.
-
-## Future Direction
-
-Beyond the tea-delivery mission, the same platform architecture can evolve into broader autonomous systems requiring:
-
-- intelligent navigation
-- environment-aware decision-making
-- adaptive operations in dynamic conditions
-- autonomous material acquisition and task execution in remote or difficult environments
-
-The next step may be a moon-targeted autonomous system capable of scouting, collecting, and processing materials in a harsh environment.
-
-## Strategic Intent
-
-This project represents a practical path toward autonomous, adaptable, multi-layered robotics and AI systems. It is not merely a toy autonomous vehicle; it is a research architecture for embodied intelligence, edge learning, and dependable decision-making in the real world.
-
-## License
-
-This project is intended for research, experimentation, and applied autonomous systems development. License terms should be defined according to the deployment and institutional requirements of the user or team.
-
-## Note
-
-This repository is a conceptual and engineering foundation for an adaptive autonomous flight and delivery system. It is designed to be extended, refined, and integrated into real-world robotic operations.
+The aimodels repository is the intelligence engine behind a real autonomous flight mission. It learns, infers, plans, and improves while remaining connected to the Pyv execution system. It is designed for actual deployment logic and for future autonomous systems that must operate in uncertain, dynamic, and complex environments.
